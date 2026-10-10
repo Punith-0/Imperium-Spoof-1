@@ -1,87 +1,166 @@
-# DynamicIQ — Team IMPERIUM
+<div align="center">
 
-A compact call-transcript quality analyzer for your hackathon. Five Python files implement the app. Includes the 85-conversation mixed dataset and a no-key offline demo.
+<img src="logo.jpeg" alt="DynamicIQ — Transcript Intelligence" width="560">
 
-## Start on Windows with VS Code + Git Bash
+### Call-transcript quality review that shows its receipts.
 
-Use Python 3.11 or 3.12. Extract the ZIP, open the DynamicIQ folder, then:
+Every finding is backed by an **exact quote**. Every conversation gets a **reviewer sign-off**.
+
+<p>
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Streamlit-1.50%2B-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Pydantic-v2-E92063?logo=pydantic&logoColor=white" alt="Pydantic">
+  <img src="https://img.shields.io/badge/LLM-structured%20outputs-16B5A5" alt="Structured outputs">
+  <img src="https://img.shields.io/badge/Offline%20demo-no%20API%20key-3B6CF0" alt="Offline demo">
+  <img src="https://img.shields.io/badge/Team-IMPERIUM-0A1626" alt="Team IMPERIUM">
+  <img src="https://img.shields.io/badge/Hackathon-ready-success" alt="Hackathon ready">
+</p>
+
+</div>
+
+---
+
+## What is DynamicIQ?
+
+DynamicIQ reads customer-support call transcripts and tells a reviewer **what happened, how the customer felt, and where quality slipped**, without trusting the model blindly.
+
+The AI proposes findings. The app **verifies every quote against the transcript** and withholds anything it can't prove. Then a human reviewer accepts or rejects each finding, adds remarks, and marks the conversation **done**, so nobody reviews the same call twice.
+
+<div align="center">
+  <img src="docs/dashboard.png" alt="DynamicIQ review dashboard" width="900">
+</div>
+
+## Features
+
+| | |
+|---|---|
+| 🎯 **Issues & outcomes** | Each customer issue is tracked separately as resolved, unresolved, pending or unknown. A polite "thanks" is not treated as resolution. |
+| ✅ **Quality checklist** | Configurable criteria with weights, scored on assessed checks only. Unknowns never count against the agent. |
+| 📈 **Sentiment per turn** | Customer turns only, with a trend chart and the exact quote behind each label. |
+| 🚩 **Risk flags** | Disrespectful wording, unanswered final questions and similar red flags, each with evidence. |
+| 🔎 **Evidence highlighting** | Pick any finding and see its exact quote highlighted inside the transcript. |
+| 🧾 **Quote verification** | Citations that don't match the transcript text exactly are rejected and listed, not shown as fact. |
+| 🕳️ **Gap-aware** | Missing or truncated transcript sections are detected; absence-based failures are never scored on incomplete calls. |
+| 🗂️ **Conversation queue** | Every conversation is listed as **Convo 1, Convo 2, …** on the right with All / Pending / Done filters. |
+| ✔️ **Mark as done** | One click saves the review, locks the conversation and jumps to the next pending one. It survives a refresh. |
+| 💬 **Remarks that save** | Decision + remark per finding with an explicit **Save** button (Enter works too). |
+| ⬇️ **Exports** | Full JSON report and a one-finding-per-row CSV, with spreadsheet-formula injection neutralised. Neither export contains your API key. |
+| 🔌 **No key? No problem** | Offline demo mode runs keyword rules so you can try the whole UI without any credentials. |
+
+<div align="center">
+  <img src="docs/review-queue.png" alt="Conversation queue with done marks" width="900">
+</div>
+
+## Quick start
+
+Python 3.11 or 3.12. On Windows with VS Code + Git Bash:
 
 ```bash
 python -m venv .venv
-source .venv/Scripts/activate
+source .venv/Scripts/activate        # macOS/Linux: source .venv/bin/activate
 python -m pip install -r requirements.txt
-cp -n .env.example .env
 python -m streamlit run app.py
 ```
 
-If `python` is unavailable, use `py` to create the virtual environment. On macOS/Linux activate with `source .venv/bin/activate` instead. Open http://localhost:8501. The offline demo runs immediately without credentials. `cp -n` preserves an existing .env.
+Open http://localhost:8501. Offline demo works immediately.
 
-## Enable actual AI analysis
+> `py` instead of `python` if `python` isn't found on Windows.
 
-Edit `.env`:
+## Enable AI analysis
+
+Create a `.env` file next to `app.py`:
 
 ```dotenv
 OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-4.1-mini
+OPENAI_MODEL=your_model_name
 ```
 
-Restart the app after editing environment settings. Select **AI analysis**, choose a conversation and click **Analyze conversation**. You can also enter a key in the sidebar for the current session. Do not commit `.env`. API requests go directly to OpenAI; account access and API billing are required. A model must support Chat Completions with strict JSON Schema outputs. No paid live API request was made during package verification; the HTTP contract, validation and error paths were tested using mocks.
+Restart the app, pick **AI analysis** in the sidebar, choose a conversation and hit **Analyze conversation**.
 
-Official API references used:
-- https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=chat
-- https://developers.openai.com/api/docs/models/gpt-4.1-mini
+- The key is **read from `.env` only** and is never displayed or exported.
+- `analyzer.py` calls an OpenAI-compatible Chat Completions endpoint (currently configured for Groq). The model must support **strict JSON Schema outputs**.
+- Incomplete conversations are blocked in AI mode with *"Cannot analyse: Missing key sentiment points"*.
+- **Never commit `.env`.** It's already in `.gitignore`.
 
-## Files
+## Review workflow
 
-- `app.py`: Streamlit dashboard, configuration, uploads, review controls, evidence highlights and downloads.
-- `analyzer.py`: structured AI request, safe errors, offline rules and analysis orchestration.
-- `helpers.py`: parsers, exact-quote checks, completeness guards, scoring and CSV export.
-- `schemas.py`: Pydantic input/output contracts.
-- `test_project.py`: regression checks; no paid requests.
-- `criteria.json`: editable QA criteria and weights. This is a team-defined checklist, not a claim of legal compliance.
-- `.env.example`: credential configuration template.
-- `samples/mixed_dataset.json`: 50 ABCD + 20 NatCS + 15 modified cases, including your original 3 ABCD records.
-- `samples/normal.json`: small authored sample with an explicit resolution.
-- `samples/edge_cases.json`: the 15 marked modified cases for convenient upload.
+1. **Load** transcripts from the sidebar: included samples, upload (JSON / CSV / TXT) or paste.
+2. **Pick** a conversation from the right-hand list.
+3. **Analyze** it.
+4. **Review** each finding: choose a decision, write a remark, click **Save**.
+5. **Mark as done**. The review is saved to `reports/`, the conversation turns green, and you move on.
 
-## Five-minute demo
-
-1. Start in **Offline demo** and analyze an included conversation. Its keyword candidates and approximate sentiment are labelled as demo output; QA scores and issue outcomes remain unassessed.
-2. Select **AI analysis** with a valid key for actual issue/outcome extraction, configurable checklist results, contextual sentiment and risk analysis.
-3. Choose an `edge_missing_section_*` or `edge_abrupt_ending_*` conversation. The app detects gaps and does not score absent actions as failures.
-4. Open **Transcript & evidence**. Select a finding to highlight its exact quote spans.
-5. Accept/reject findings, add notes and download JSON/CSV from **Review & export**.
+Need to change something later? **Reopen for review** unlocks it.
 
 ## Input formats
 
-JSON supports:
-- The delivered wrapper: `{"metadata": {...}, "conversations": [...]}`.
-- A list of call records or one call object.
-- Original ABCD records using `convo_id` and `original: [["agent", "..."], ...]`.
-- Normalized records using `conversation_id` and `turns: [{"speaker":"customer", "text":"..."}]`.
+JSON accepts:
 
-CSV: one call per row, with `conversation_id` and either `turns_json` or `transcript`. The previously delivered mixed CSV works directly. TXT/paste: use `Agent:` / `Customer:` lines; unlabelled continuations stay with the previous turn. A wholly unlabelled transcript keeps speaker `unknown`; no customer sentiment is guessed from it.
+- The wrapper `{"metadata": {...}, "conversations": [...]}`
+- A list of call records, or a single call object
+- Original ABCD records: `convo_id` + `original: [["agent", "..."], ...]`
+- Normalised records: `conversation_id` + `turns: [{"speaker": "customer", "text": "..."}]`
 
-Turn IDs are normalized to t001, t002, etc. Missing/null text becomes a visible gap marker. Source metadata, expected edge-case checks and source intent labels are never sent to the model. Action events are kept as `system`, not customer speech. There is no automatic audio transcription or PDF ingestion.
+CSV: one call per row with `conversation_id` and either `turns_json` or `transcript`.
+TXT / paste: `Agent:` and `Customer:` lines; unlabelled lines continue the previous turn.
 
-Limits: 10 MB upload, 500 records per file, 200 turns and 40,000 characters per call. Oversized inputs are rejected, never silently truncated. One selected call is analyzed per click; batch AI analysis is not implemented.
+Turn IDs are normalised to `t001, t002, …`. Missing text becomes a visible gap marker. Action events are kept as `system`, not customer speech. Evaluation labels and source metadata are never sent to the model.
 
-## Evidence, scoring and limitations
+**Limits:** 10 MB per upload · 500 conversations per file · 200 turns and 40,000 characters per call. Oversized input is rejected, never silently truncated.
 
-Each issue/risk must contain exact substrings from the specified transcript turns. Invalid evidence is withheld and listed in the report. Sentiment is restricted to customer turns. Exact text matching verifies citation existence, not whether the quoted text logically supports the interpretation; review is still needed.
+## How scoring works
 
-Checklist outcomes: pass, fail, unknown, not_applicable. Missing or duplicate checklist results become unknown. Absence-based failures require a reviewer-confirmed complete transcript. Known gaps override that confirmation. Score = 100 × passed weight / (passed + failed weight). Unknown and not_applicable checks are excluded, and assessment coverage is shown alongside the score. A high score with low coverage is not a full-call assessment.
+```
+score = 100 × (weight of passed checks) / (weight of passed + failed checks)
+```
 
-Offline demo uses regex topics and a basic positive/negative word list. It does not evaluate full QA semantics, infer resolution, or claim model accuracy. It intentionally leaves all criteria unknown, while showing evidence candidates and approximate sentiment.
+- Outcomes per check: `pass`, `fail`, `unknown`, `not_applicable`.
+- `unknown` and `not_applicable` are **excluded** from the score; assessment coverage is shown next to it.
+- Missing or duplicate model results become `unknown`.
+- Absence-based failures need a reviewer-confirmed complete transcript. Known gaps override that confirmation.
+- Reviewer decisions **never silently change** the generated score.
 
-Reviewer decisions and notes are stored in the current browser session and included in report downloads. Decisions do not mutate the original generated score. Only the last 10 analyses are retained in session; restart/reconnect may clear them. Download to persist. No authentication, production database or multi-team access control is included in this hackathon app.
+## Project structure
 
-Original dataset QA outcomes are not gold-labelled. The 15 modified cases contain authored test expectations, not independent validation. Keep parent/modified records together using the dataset's group_id if training or splitting. Preserve dataset licenses in `samples/` when redistributing. Source text is not automatically anonymized.
+```
+DynamicIQ/
+├── app.py              Streamlit UI: queue, review forms, evidence view, exports
+├── analyzer.py         AI request, safe error handling, offline rules, orchestration
+├── helpers.py          Parsers, exact-quote checks, completeness guards, scoring, CSV
+├── schemas.py          Pydantic input/output contracts
+├── criteria.json       Editable QA criteria and weights
+├── test_project.py     Regression tests (no paid API calls)
+├── logo.jpeg           Brand logo (also used in the app header)
+├── .streamlit/         Theme config (light)
+├── samples/            Mixed dataset + edge cases
+└── reports/            Saved reviews + done status (git-ignored, created on demand)
+```
 
-## Test
+## Tests
 
 ```bash
 python -m unittest -v test_project.py
 ```
 
-Tests check all 85 samples, exact-quote rejection, incomplete evidence, unknown speakers, malformed input, scoring, CSV round-trips, API error handling and prevention of evaluation-label leakage. Tests mock AI responses rather than claiming a live API test.
+Covers all 85 samples, exact-quote rejection, incomplete evidence, unknown speakers, malformed input, scoring, CSV round-trips, API error handling and evaluation-label leakage. AI responses are mocked; no live API test is claimed.
+
+## Honest limitations
+
+- Exact-quote matching proves a quote **exists**, not that it **supports** the interpretation. Human review still matters.
+- Offline demo is a keyword UI demo, not an AI quality assessment.
+- Dataset QA outcomes aren't gold-labelled. The 15 modified edge cases carry authored expectations, not independent validation.
+- No authentication, database or multi-team access control. Done-status lives in local files, so one shared `reports/` folder means one shared review state.
+- No audio transcription or PDF ingestion. Source text isn't auto-anonymised.
+- Keep parent and modified records together via `group_id` if you split data for training. Preserve dataset licences in `samples/` when redistributing.
+
+## Built by
+
+**Team IMPERIUM**. Built for the hackathon, designed to survive a reviewer.
+
+---
+
+<sub>
+
+**GitHub topics to add:** `streamlit` · `python` · `nlp` · `llm` · `call-center` · `customer-support` · `quality-assurance` · `sentiment-analysis` · `transcript-analysis` · `structured-outputs` · `pydantic` · `hackathon`
+
+</sub>
