@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.jpeg" alt="DynamicIQ — Transcript Intelligence" width="560">
+<img src="images/logo.jpeg" alt="DynamicIQ — Transcript Intelligence" width="560">
 
 ### Call-transcript quality review that shows its receipts.
 
@@ -27,7 +27,7 @@ DynamicIQ reads customer-support call transcripts and tells a reviewer **what ha
 The AI proposes findings. The app **verifies every quote against the transcript** and withholds anything it can't prove. Then a human reviewer accepts or rejects each finding, adds remarks, and marks the conversation **done**, so nobody reviews the same call twice.
 
 <div align="center">
-  <img src="dashboard.png" alt="DynamicIQ review dashboard" width="900">
+  <img src="images/dashboard.jpeg" alt="DynamicIQ review dashboard" width="900">
 </div>
 
 ## Features
@@ -48,7 +48,7 @@ The AI proposes findings. The app **verifies every quote against the transcript*
 | 🔌 **No key? No problem** | Offline demo mode runs keyword rules so you can try the whole UI without any credentials. |
 
 <div align="center">
-  <img src="review-queue.png" alt="Conversation queue with done marks" width="900">
+  <img src="images/review-dashboard.jpeg" alt="Conversation queue with done marks" width="900">
 </div>
 
 ## Quick start
