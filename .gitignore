@@ -6,4 +6,4 @@ __pycache__/
 reports/
 .zip
 samples
-.steamlit
+.streamlit
