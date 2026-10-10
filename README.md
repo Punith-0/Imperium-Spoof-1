@@ -48,7 +48,7 @@ The AI proposes findings. The app **verifies every quote against the transcript*
 | 🔌 **No key? No problem** | Offline demo mode runs keyword rules so you can try the whole UI without any credentials. |
 
 <div align="center">
-  <img src="images/review-dashboard.jpeg" alt="Conversation queue with done marks" width="900">
+  <img src="images/review-dashbaord.jpeg" alt="Conversation queue with done marks" width="900">
 </div>
 
 ## Quick start
