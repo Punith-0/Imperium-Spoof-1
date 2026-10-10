@@ -1,0 +1,7 @@
+[
+  {"id":"greeting","name":"Professional greeting","description":"The agent opens with a polite greeting or introduction.","weight":1,"enabled":true,"demo_patterns":["\\b(hello|hi|good morning|good afternoon|welcome)\\b"]},
+  {"id":"acknowledgement","name":"Acknowledge the issue","description":"The agent acknowledges the customer's actual concern or expresses relevant empathy.","weight":2,"enabled":true,"demo_patterns":["\\b(sorry|apologi[sz]e|understand|frustrating)\\b"]},
+  {"id":"next_steps","name":"Clear next steps","description":"The agent gives an actionable next step or explains a completed action relevant to the customer's issue. Do not require a refund if policy does not permit one.","weight":3,"enabled":true,"demo_patterns":["\\b(will|please|reset|escalate|investigat|send|sent|processed)\\w*\\b"]},
+  {"id":"resolution_check","name":"Confirm the outcome","description":"The agent checks whether the customer's issue was addressed or whether further help is needed. A polite goodbye alone is not resolution confirmation.","weight":2,"enabled":true,"demo_patterns":["anything else","further assist","did that","does that","has that","able to"]},
+  {"id":"closing","name":"Professional closing","description":"The agent closes politely when the conversation actually ends.","weight":1,"enabled":true,"demo_patterns":["goodbye","have a (great|good|nice)","thank you for (calling|contacting)"]}
+]
