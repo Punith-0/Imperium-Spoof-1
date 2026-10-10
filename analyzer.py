@@ -28,7 +28,7 @@ regulated procedures unless explicitly specified in the criteria. Assess each cu
 sentiment separately; include one exact quote from that same customer turn. Avoid treating
 agent text as customer sentiment. Skip missing text markers. Flag potentially problematic
 interactions using evidence, without claiming that matching text proves your interpretation.
-Keep explanations concise. No additional keys. Do not include hidden reasoning.'''
+Keep explanations concise. No additional keys. Do not include hidden reasoning.Generate coaching recommendations for the agent s'''
 
 def ai_analysis(call, criteria, api_key, model):
     if not api_key.strip():
